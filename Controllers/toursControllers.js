@@ -1,6 +1,41 @@
 const fs = require('fs');
 const Tour = require('../models/tourModel.js');
+const { json } = require('stream/consumers');
 
+class APIFeatures{
+    constructor(query, queryStr){
+        this.query = query;
+        this.queryStr = queryStr;
+    }
+
+    filter(){
+     const queryObj = this.queryStr;
+     const excludedFiels = ['page', 'sort', 'limit', 'fields'];
+     excludedFiels.forEach(el => delete queryObj[el]);
+
+     let queryStr = JSON.stringify(queryObj);
+     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
+     console.log(JSON.parse(queryStr));
+     
+     // the query object
+     this.query= Tour.find(JSON.parse(queryStr));
+
+     return this;
+    }
+
+    sort(){
+
+        return this;
+    }
+
+    limitFields(){
+        return this;
+    }
+
+    paginate(){
+        return this;
+    }
+};
  exports.getAllTours = async (req, res) => {
      const queryObj = {...req.query};
      const excludedFiels = ['page', 'sort', 'limit', 'fields'];
@@ -10,8 +45,10 @@ const Tour = require('../models/tourModel.js');
      queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
      console.log(JSON.parse(queryStr));
      
+     // the query object
      let query = Tour.find(queryObj)
-     
+
+     // sorting fields
      if(req.query.sort){
         let sortBy = req.query.sort.split(',').join(' ');
         query = query.sort(sortBy);
@@ -19,11 +56,28 @@ const Tour = require('../models/tourModel.js');
         query = query.sort('-createdAt');
      }
 
+     // limiting fields
      if(req.query.fields){
         let selected = req.query.fields.split(',').join(' ');
         query = query.select(selected);
      } else {
         query = query.select('-__v');
+     }
+
+     //pagination
+     const page = req.query.page * 1 || 1;
+     const limit = req.query.limit * 1 || 10;
+     const skip = (page - 1) * limit; 
+     query = query.skip(skip).limit(limit);
+
+     // the final query
+     const toursTotal = await Tour.countDocuments();     
+     if(page > (toursTotal / limit)){         
+         res.status(404).json({
+          status: 'Fail',
+          message: "Page Does Not Exist"
+       });
+       return;
      }
     const tours = await query;
     try{
