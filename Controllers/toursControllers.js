@@ -77,7 +77,7 @@ exports.getTourByID = async (req, res) => {
 exports.addNewTour = async (req, res) => {
     const newTour = await Tour.create(req.body);
     try{
-        res.status(200).json({
+        res.status(201).json({
         status: 'Success',
         data: {
             tour: newTour
@@ -89,7 +89,6 @@ exports.addNewTour = async (req, res) => {
             message: 'Invalid Data Sent!'
         })
     }
-
 };
 
 exports.updateTour = async (req, res) => {
