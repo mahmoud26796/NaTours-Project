@@ -4,7 +4,7 @@ const { json } = require('stream/consumers');
 const APIFeatures = require('../utils/apiFeatures.js');
  exports.getAllTours = async (req, res) => {
      // the final query
-    const featuers = new APIFeatures(Tour.find(), req.query).filter().sort().limitFields().paginate();
+    const featuers = new APIFeatures(Tour.find({}), req.query).filter().sort().limitFields().paginate();
     const tours = await featuers.query;
     try{
          res.status(200).json({

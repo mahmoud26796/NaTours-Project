@@ -5,7 +5,7 @@ const tourSchema = new mongoose.Schema({
         type: String,
         required: [true, "Tour Must Have A Name"],
         trim: true,
-        unique: [true, "Sorry! This Tour Name Is Taken"],
+        unique: true,
         maxlength: [40, 'A tour name must have less or equal then 40 characters'],
         minlength: [10, 'A tour name must have more or equal then 10 characters']
     },
@@ -20,11 +20,16 @@ const tourSchema = new mongoose.Schema({
     },
     difficulty:{
         type: String,
-        required : [true, 'Tour Must Have Difficulty Level']
+        required : [true, 'Tour Must Have Difficulty Level'],
+        enum:{
+            values:['Easy', 'Medium', 'Hard'],
+            message: 'Difficulty Can Only be Easy, Medium or Hard'
+        }
     },
     ratingsAverage:{
         type: Number,
         default: 4.5
+       
     },
     ratingsQuantity:{
         type: Number,
@@ -32,7 +37,9 @@ const tourSchema = new mongoose.Schema({
     },
     rating:{
         type:Number,
-        default: 4.5
+        default: 4.5,
+        min: [1, "Ratings Must be More Than Zero"],
+        mx: [5, "Ratings Maximum is 5"]
     },
     price:{
         type:Number,
@@ -51,7 +58,11 @@ const tourSchema = new mongoose.Schema({
         trim: true
     },
     images: [String],
-    startDates:[Date]
+    startDates:[Date],
+    secretTour: {
+        type: Boolean,
+        default: false
+     }
 },{
     toJSON: {virtuals: true},
     toObject : {virtuals: true}
@@ -63,6 +74,16 @@ tourSchema.virtual("durationInWeeks").get(function(){
 
 tourSchema.pre('save', function(next){
     this.slug = slugify(this.name, {lower: true});
+    next();
+});
+
+tourSchema.pre(/^find/, function(next){
+    this.find({secretTour: {$ne: true}});
+    next();
+});
+
+tourSchema.pre('aggregate', function(next){
+    this.pipeline().unshift({ $match:{ secretTour: { $ne: true } } });
     next();
 });
 const Tour = mongoose.model('Tour', tourSchema);
