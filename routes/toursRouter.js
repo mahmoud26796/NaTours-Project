@@ -8,13 +8,14 @@ router
     .route('/').get(getAllTours)
     .post(addNewTour);
 router
-    .route('/tours-stats').get(getToursStats);
-router
-    .route('/monthly-plan/:year').get(getMonthlyPlan);
-router
     .route('/:id')
     .get(getTourByID)
     .patch(updateTour)
     .delete(removeTour);
+router
+    .route('/tours-stats').get(getToursStats);
+router
+    .route('/monthly-plan/:year').get(getMonthlyPlan);
+
 
 module.exports = router;
