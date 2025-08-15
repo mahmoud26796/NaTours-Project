@@ -42,7 +42,7 @@ const tourSchema = new mongoose.Schema({
         type:Number,
         default: 4.5,
         min: [1, "Ratings Must be More Than Zero"],
-        mx: [5, "Ratings Maximum is 5"]
+        max: [5, "Ratings Maximum is 5"]
     },
     price:{
         type:Number,
