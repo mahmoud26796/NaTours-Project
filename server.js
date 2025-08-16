@@ -15,10 +15,17 @@ mongoose
     useFindAndModify: false,
     useUnifiedTopology: true,
   })
-  .then(() => console.log("Database Connected"))
-  .catch((e) => console.log(e));
+  .then(() => console.log("Database Connected"));
+// .catch((e) => console.log(e));
 
 const port = process.env.PORT || 3000;
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log("Listening... on port", port);
+});
+
+process.on('unhandledRejection', (err) => {
+  console.error(`App Crashed ${err.name} - ${err.message}, Closing...`);
+    server.close(() => {
+      process.exit(1);
+    });
 });
