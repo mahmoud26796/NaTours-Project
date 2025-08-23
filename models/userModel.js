@@ -30,6 +30,7 @@ const userSchema = new mongoose.Schema({
     unique: [true, "Password Is Taken Must Be Uniqe"],
     maxLength: [32, "Password must be less or equal then 32 Numbers"],
     minLength: [8, "Password must be more or equal then 16 Numbers"],
+    select: false,
   },
   passwordConfirm: {
     type: String,
@@ -51,6 +52,9 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
+userSchema.methods.correct = async function (inputPassword, hashedPassword) {
+  return await bcrypt.compare(inputPassword, hashedPassword);
+};
 const User = mongoose.model("User", userSchema);
 
 module.exports = User;

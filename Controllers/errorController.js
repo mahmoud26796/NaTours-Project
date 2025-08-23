@@ -50,8 +50,6 @@ module.exports = (err, req, res, next) => {
     devErrors(err, res);
   } else if (process.env.NODE_ENV === "production") {
     let error = { ...err };
-    console.log("operational => ", error.isOperational);
-
     if (err.name === "CastError") error = handleCastErrorsDB(error);
     else if (err.name === "ValidationError")
       error = handleValidationErrDB(error);
