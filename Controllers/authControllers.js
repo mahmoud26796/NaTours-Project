@@ -9,12 +9,14 @@ const signToken = (id) => {
   });
 };
 exports.signUp = catchAsync(async (req, res, next) => {
-  const newUser = await User.create({
-    name: req.body.name,
+  const newUser = await User.create(req.body);
+  /**
+   *     name: req.body.name,
     email: req.body.email,
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
-  });
+    passwordChangedAt: passwordChangedAt,
+   */
 
   const token = signToken(newUser._id);
   res.status(201).json({
@@ -52,16 +54,29 @@ exports.protect = catchAsync(async (req, res, next) => {
   ) {
     token = req.headers.authorization.split(" ")[1];
   }
-  if (!token) {
+  if (!token)
     return next(
       new AppError("Your Are Not Logged In, Please Login To Get Access", 401)
     );
-  }
+
   const decoded = await promisify(jwt.verify)(
     token,
     process.env.JWT_SECRET_TOKEN
   );
-  console.log(decoded);
+  const user = await User.findById(decoded.id);
 
+  if (!user)
+    return next(
+      new AppError("The User Belongs To this Token Is No Longer Exists", 401)
+    );
+
+  if (user.isPasswordChanged(decoded.iat))
+    return next(
+      new AppError(
+        "You recently Changed Your Password, Please Login again",
+        401
+      )
+    );
+  req.user = user;
   next();
 });

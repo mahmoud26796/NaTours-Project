@@ -42,6 +42,7 @@ const userSchema = new mongoose.Schema({
       message: "Password Confrimation is Incorrect Please Enter It Again",
     },
   },
+  passwordChangedAt: Date,
 });
 
 userSchema.pre("save", async function (next) {
@@ -54,6 +55,17 @@ userSchema.pre("save", async function (next) {
 
 userSchema.methods.correct = async function (inputPassword, hashedPassword) {
   return await bcrypt.compare(inputPassword, hashedPassword);
+};
+
+userSchema.methods.isPasswordChanged = function (jwtTimeStmp) {
+  if (this.passwordChangedAt) {
+    const changedTimeStamp = parseInt(
+      this.passwordChangedAt.getTime() / 1000,
+      10
+    );
+    return jwtTimeStmp < changedTimeStamp;
+  }
+  return false;
 };
 const User = mongoose.model("User", userSchema);
 
