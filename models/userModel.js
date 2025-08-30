@@ -29,8 +29,8 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, "Your Account Must Have A Password"],
     unique: [true, "Password Is Taken Must Be Uniqe"],
-    maxLength: [32, "Password must be less or equal then 32 Numbers"],
-    minLength: [8, "Password must be more or equal then 16 Numbers"],
+    maxLength: [32, "Password can't be more than 32 Numbers"],
+    minLength: [8, "Password must be more than or equal 8 Numbers"],
     select: false,
   },
   passwordConfirm: {
