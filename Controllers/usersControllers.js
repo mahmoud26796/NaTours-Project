@@ -1,6 +1,7 @@
 const fs = require("fs");
 const catchAsync = require("../utils/catchAsync");
 const User = require("../models/userModel");
+const AppError = require("../utils/appError");
 
 // users resource
 // reading users data from txt file
@@ -16,7 +17,6 @@ exports.getAllUsers = catchAsync(async (req, res) => {
     },
   });
 });
-
 
 exports.userUpdateInfo = catchAsync(async (req, res, next) => {
   const { id } = req.params;
@@ -43,5 +43,17 @@ exports.userUpdateInfo = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: "Success",
     message: "Information Updated!",
+  });
+});
+
+exports.deleteUserAccount = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  if (!id) {
+    return next(new AppError("Please Provide Correct ID", 401));
+  }
+  await User.findByIdAndDelete(id);
+  res.status(200).json({
+    status: "Success",
+    message: "Account Deleted Successfuly!",
   });
 });
