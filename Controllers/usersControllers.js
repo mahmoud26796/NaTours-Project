@@ -16,3 +16,32 @@ exports.getAllUsers = catchAsync(async (req, res) => {
     },
   });
 });
+
+
+exports.userUpdateInfo = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  if (!id) {
+    return next(new AppError("Please Provide Correct ID", 401));
+  }
+  const { newName, newEmail } = req.body;
+  if (!newName && !newEmail) {
+    return next(
+      new AppError(
+        "Please Provide The Fields You Want To Change [name or email] or Cancel",
+        401
+      )
+    );
+  }
+  const user = await User.findById(id);
+  if (!user) {
+    return next(new AppError("Account Not Found", 404));
+  }
+  if (newName !== undefined) user.name = newName;
+  if (newEmail !== undefined) user.email = newEmail;
+  await user.save({ validateBeforeSave: false });
+
+  res.status(200).json({
+    status: "Success",
+    message: "Information Updated!",
+  });
+});
