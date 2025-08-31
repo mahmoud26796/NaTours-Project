@@ -2,7 +2,32 @@ const morgan = require("morgan");
 const express = require("express");
 const AppError = require("./utils/appError");
 const errorHandler = require("./Controllers/errorController");
+
+//security packages
+const rateLimit = require("express-rate-limit");
+const helmet = require("helmet");
+const xss = require("xss-clean");
 const app = express();
+const mongoSanitize = require("express-mongo-sanitize");
+//security packages
+
+// rate limiting logic
+const limiter = rateLimit({
+  limit: 100,
+  windowMs: 60 * 60 * 1000,
+  message:
+    "You Achive The Maximum Limit Of Requests Please Try Again After 1 Hour",
+});
+app.use("/api", limiter);
+
+//setting http headers
+app.use(helmet());
+
+//Data Sanitization against Nosql Query injection
+app.use(mongoSanitize());
+
+// Data Sanitization against xss attacks
+app.use(xss());
 
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
