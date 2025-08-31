@@ -18,23 +18,38 @@ const signToken = (id) => {
 // send response with the token fro the user
 const sendJWT = (user, statusCode, res) => {
   const token = signToken(user._id);
+
+  // sending the JWT in an HTTP only cookie for the client
+  const cookiesOptions = {
+    expiresIn: new Date(
+      Date.now() + process.env.COOKIE_EXPIRES * 204 * 60 * 1000
+    ),
+    httpOnly: true,
+  };
+  if (process.env.NODE_ENV === "production") {
+    cookiesOptions.secure = "true";
+  }
+  res.cookie("jwt", token, cookiesOptions);
+
   res.status(statusCode).json({
     status: "success",
     token,
   });
 };
 exports.signUp = catchAsync(async (req, res, next) => {
+  const { name, email, password, passwordConfirm, role } = req.body;
   const newUser = await User.create({
-    name: req.body.name,
-    email: req.body.email,
-    password: req.body.password,
-    passwordConfirm: req.body.passwordConfirm,
+    name,
+    email,
+    password,
+    passwordConfirm,
+    role,
   });
 
-  sendJWT(newUser, 201, res);
   res.data = {
     user: newUser,
   };
+  sendJWT(newUser, 201, res);
 });
 
 exports.login = catchAsync(async (req, res, next) => {
@@ -128,7 +143,6 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     user.changePassToken = undefined;
     user.changeTokenExpire = undefined;
     user.save({ validateBeforeSave: false });
-    console.log(e);
 
     return next(new AppError("Error Sending The Email To The User", 500));
   }
@@ -186,6 +200,6 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   await user.save();
 
   //4- log user in and send JWT
-  sendJWT(user, 200, res);
   res.message = "Password Changed!";
+  sendJWT(user, 200, res);
 });
