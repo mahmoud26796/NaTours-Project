@@ -1,103 +1,129 @@
-const mongoose = require('mongoose');
-const slugify = require('slugify');
-const validator = require('validator');
+const mongoose = require("mongoose");
+const slugify = require("slugify");
+const validator = require("validator");
 
-const tourSchema = new mongoose.Schema({
-    name:{
-        type: String,
-        required: [true, "Tour Must Have A Name"],
-        trim: true,
-        unique: true,
-        maxlength: [40, 'A tour name must have less or equal then 40 characters'],
-        minlength: [10, 'A tour name must have more or equal then 10 characters'],
-        // validate: [validator.isAlpha, 'Tour Name Can Only Be Alphabetical Characters']
+const tourSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: [true, "Tour Must Have A Name"],
+      trim: true,
+      unique: true,
+      maxlength: [40, "A tour name must have less or equal then 40 characters"],
+      minlength: [10, "A tour name must have more or equal then 10 characters"],
+      // validate: [validator.isAlpha, 'Tour Name Can Only Be Alphabetical Characters']
     },
     slug: String,
     duration: {
-        type: Number,
-        required: [true, "Tour Must Have a Duration"]
+      type: Number,
+      required: [true, "Tour Must Have a Duration"],
     },
     maxGroupSize: {
-        type: Number,
-        required: [true, 'Tour Must Have a MAx Group Size']
+      type: Number,
+      required: [true, "Tour Must Have a MAx Group Size"],
     },
-    difficulty:{
-        type: String,
-        required : [true, 'Tour Must Have Difficulty Level'],
-        enum:{
-            values:['easy', 'medium', 'hard'],
-            message: 'Difficulty Can Only be easy, medium or hard'
-        }
+    difficulty: {
+      type: String,
+      required: [true, "Tour Must Have Difficulty Level"],
+      enum: {
+        values: ["easy", "medium", "difficult"],
+        message: "Difficulty Can Only be easy, medium or difficult",
+      },
     },
-    ratingsAverage:{
-        type: Number,
-        default: 4.5
-       
+    ratingsAverage: {
+      type: Number,
+      default: 4.5,
     },
-    ratingsQuantity:{
-        type: Number,
-        default: 0
+    ratingsQuantity: {
+      type: Number,
+      default: 0,
     },
-    rating:{
-        type:Number,
-        default: 4.5,
-        min: [1, "Ratings Must be More Than Zero"],
-        max: [5, "Ratings Maximum is 5"]
+    rating: {
+      type: Number,
+      default: 4.5,
+      min: [1, "Ratings Must be More Than Zero"],
+      max: [5, "Ratings Maximum is 5"],
     },
-    price:{
-        type:Number,
-        required: [true, "Tour Must Have A Valid Price"]
+    price: {
+      type: Number,
+      required: [true, "Tour Must Have A Valid Price"],
     },
     priceDiscount: {
-        type: Number,
-        validate: {
-            validator: function(val){
-                return this.price > val;
-            },
-            message: 'Discount Value ({VALUE}) should be less than the Actual Tour Price'
-        }
+      type: Number,
+      validate: {
+        validator: function (val) {
+          return this.price > val;
+        },
+        message:
+          "Discount Value ({VALUE}) should be less than the Actual Tour Price",
+      },
     },
     summary: {
-       type: String,
-       trim: true
+      type: String,
+      trim: true,
     },
-    description:{
-        type: String,
-        trim: true
+    description: {
+      type: String,
+      trim: true,
     },
     imageCover: {
-        type: String,
-        trim: true
+      type: String,
+      trim: true,
     },
     images: [String],
-    startDates:[Date],
+    startDates: [Date],
     secretTour: {
-        type: Boolean,
-        default: false
-     }
-},{
-    toJSON: {virtuals: true},
-    toObject : {virtuals: true}
+      type: Boolean,
+      default: false,
+    },
+    startLocations: {
+      description: String,
+      type: {
+        type: String,
+        default: "Point",
+        enum: ["Point"],
+      },
+      coordinates: [Number],
+      address: String,
+    },
+    locations: [
+      {
+        description: String,
+        type: {
+          type: String,
+          default: "Point",
+          enum: ["Point"],
+        },
+        coordinates: [Number],
+        address: String,
+        day: Number,
+      },
+    ],
+  },
+  {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  }
+);
+
+tourSchema.virtual("durationInWeeks").get(function () {
+  return Math.ceil(this.duration / 7);
 });
 
-tourSchema.virtual("durationInWeeks").get(function(){
-    return Math.ceil(this.duration / 7);
+tourSchema.pre("save", function (next) {
+  this.slug = slugify(this.name, { lower: true });
+  next();
 });
 
-tourSchema.pre('save', function(next){
-    this.slug = slugify(this.name, {lower: true});
-    next();
+tourSchema.pre(/^find/, function (next) {
+  this.find({ secretTour: { $ne: true } });
+  next();
 });
 
-tourSchema.pre(/^find/, function(next){
-    this.find({secretTour: {$ne: true}});
-    next();
+tourSchema.pre("aggregate", function (next) {
+  this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+  next();
 });
-
-tourSchema.pre('aggregate', function(next){
-    this.pipeline().unshift({ $match:{ secretTour: { $ne: true } } });
-    next();
-});
-const Tour = mongoose.model('Tour', tourSchema);
+const Tour = mongoose.model("Tour", tourSchema);
 
 module.exports = Tour;
