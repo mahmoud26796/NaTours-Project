@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const slugify = require("slugify");
 const validator = require("validator");
+const User = require("./userModel");
 
 const tourSchema = new mongoose.Schema(
   {
@@ -99,6 +100,13 @@ const tourSchema = new mongoose.Schema(
         day: Number,
       },
     ],
+    // guides: Array,
+    guides: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
   },
   {
     toJSON: { virtuals: true },
@@ -120,10 +128,25 @@ tourSchema.pre(/^find/, function (next) {
   next();
 });
 
+tourSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: guides,
+    select: "-__v -passwordChangedAt",
+  });
+  next();
+});
+
 tourSchema.pre("aggregate", function (next) {
   this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
   next();
 });
+
+// the logic for getting the ids from the guide array while embedding users into tour document
+// tourSchema.pre("save", async function (next) {
+//   const promises = this.guides.map(async (id) => await User.findById(id));
+//   this.guides = await Promise.all(promises);
+//   next();
+// });
 const Tour = mongoose.model("Tour", tourSchema);
 
 module.exports = Tour;
