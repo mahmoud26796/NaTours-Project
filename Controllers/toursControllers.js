@@ -49,7 +49,7 @@ exports.getToursStats = catchAsync(async (req, res) => {
   });
 });
 exports.getTourByID = catchAsync(async (req, res) => {
-  const tour = await Tour.findById(req.params.id);
+  const tour = await Tour.findById(req.params.id).populate("review");
   res.status(200).json({
     status: "success",
     data: {
