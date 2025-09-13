@@ -43,7 +43,7 @@ const userSchema = new mongoose.Schema({
       message: "Password Confrimation is Incorrect Please Enter It Again",
     },
   },
-  passwordChangedAt: Date,
+  passwordChangedAt: { type: Date, select: false },
   changePassToken: String,
   changeTokenExpire: Date,
   role: {
