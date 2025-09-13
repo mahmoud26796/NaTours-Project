@@ -1,8 +1,7 @@
 const mongoose = require("mongoose");
+const { path } = require("../app");
 
-const Schema = new mongoose.Schema();
-
-const reviewsSchema = Schema(
+const reviewsSchema = mongoose.Schema(
   {
     review: {
       type: String,
@@ -20,14 +19,14 @@ const reviewsSchema = Schema(
     },
     tour: [
       {
-        type: Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "Tour",
         required: [true, "Review Must Belong To a Tour"],
       },
     ],
     user: [
       {
-        type: Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: [true, "Review Must Belong To a User"],
       },
@@ -40,13 +39,16 @@ const reviewsSchema = Schema(
 );
 
 reviewsSchema.pre(/^find/, function (next) {
-  this.populate(tour);
+  this.populate({
+    path: 'tour',
+    select: 'name'
+  }).populate({
+    path: 'user',
+    select: 'name'
+  });
   next();
 });
-reviewsSchema.pre(/^find/, function (next) {
-  this.populate(user);
-  next();
-});
+
 const Review = mongoose.model("Review", reviewsSchema);
 
 module.exports = Review;
