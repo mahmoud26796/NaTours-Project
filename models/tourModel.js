@@ -1,7 +1,5 @@
 const mongoose = require("mongoose");
 const slugify = require("slugify");
-const validator = require("validator");
-const User = require("./userModel");
 
 const tourSchema = new mongoose.Schema(
   {
@@ -118,6 +116,12 @@ tourSchema.virtual("durationInWeeks").get(function () {
   return Math.ceil(this.duration / 7);
 });
 
+tourSchema.virtual("review", {
+  ref: "Review",
+  foreignField: "tour",
+  localField: "_id",
+});
+
 tourSchema.pre("save", function (next) {
   this.slug = slugify(this.name, { lower: true });
   next();
@@ -130,7 +134,7 @@ tourSchema.pre(/^find/, function (next) {
 
 tourSchema.pre(/^find/, function (next) {
   this.populate({
-    path: 'guides',
+    path: "guides",
     select: "-__v -passwordChangedAt",
   });
   next();
