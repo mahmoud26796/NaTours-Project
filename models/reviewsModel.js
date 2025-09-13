@@ -1,6 +1,4 @@
 const mongoose = require("mongoose");
-const { path } = require("../app");
-
 const reviewsSchema = mongoose.Schema(
   {
     review: {
@@ -40,11 +38,8 @@ const reviewsSchema = mongoose.Schema(
 
 reviewsSchema.pre(/^find/, function (next) {
   this.populate({
-    path: 'tour',
-    select: 'name'
-  }).populate({
-    path: 'user',
-    select: 'name'
+    path: "user",
+    select: "name",
   });
   next();
 });
