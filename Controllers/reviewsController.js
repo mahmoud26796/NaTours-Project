@@ -2,7 +2,11 @@ const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 const Review = require("../models/reviewsModel");
 exports.getAllReviews = catchAsync(async (req, res, next) => {
-  const reviews = await Review.find({});
+  const filterRevsForTour = {};
+  if (req.params.tourId) filterRevsForTour["tour"] = req.params.tourId;
+  console.log(filterRevsForTour);
+
+  const reviews = await Review.find(filterRevsForTour);
   if (!reviews) {
     next(new AppError("This page Not Found", 404));
   }

@@ -1,5 +1,5 @@
 const express = require("express");
-
+const reviewsRouter = require("./reviewsRouter");
 const router = express.Router();
 // Controllers
 const {
@@ -15,8 +15,15 @@ const { protect, restrictTo } = require("../Controllers/authControllers");
 
 const { addReview } = require("../Controllers/reviewsController");
 // Controllers
+
+// merged params logic
+router.use("/:tourId/reviews", reviewsRouter);
 // tours routes
-router.route("/").get(protect, getAllTours).post(addNewTour);
+router
+  .route("/")
+  .get(protect, getAllTours)
+  .post(addNewTour)
+  .post(protect, restrictTo("user"), addReview);
 router
   .route("/:id")
   .get(getTourByID)
@@ -24,5 +31,4 @@ router
   .delete(protect, restrictTo("admin", "lead-guide"), removeTour);
 router.route("/tours-stats").get(getToursStats);
 router.route("/monthly-plan/:year").get(getMonthlyPlan);
-router.route("/:tourId/reviews").post(protect, restrictTo("user"), addReview);
 module.exports = router;
