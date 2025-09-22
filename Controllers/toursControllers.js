@@ -3,6 +3,7 @@ const Tour = require("../models/tourModel.js");
 const { json } = require("stream/consumers");
 const APIFeatures = require("../utils/apiFeatures.js");
 const catchAsync = require("../utils/catchAsync.js");
+const { deleteOne } = require("./handlerFacory");
 
 exports.getAllTours = catchAsync(async (req, res) => {
   // the final query
@@ -80,15 +81,16 @@ exports.updateTour = catchAsync(async (req, res) => {
   });
 });
 
-exports.removeTour = catchAsync(async (req, res) => {
-  await Tour.findByIdAndDelete(req.params.id);
-  res.status(200).json({
-    status: "Success",
-    result: {
-      message: "Tour Deleted Successfuly",
-    },
-  });
-});
+exports.removeTour = deleteOne(Tour);
+// exports.removeTour = catchAsync(async (req, res) => {
+//   await Tour.findByIdAndDelete(req.params.id);
+//   res.status(200).json({
+//     status: "Success",
+//     result: {
+//       message: "Tour Deleted Successfuly",
+//     },
+//   });
+// });
 
 exports.getMonthlyPlan = catchAsync(async (req, res) => {
   const year = req.params.year * 1;
