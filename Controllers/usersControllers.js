@@ -18,6 +18,22 @@ exports.getAllUsers = catchAsync(async (req, res) => {
   });
 });
 
+exports.getUserById = catchAsync(async (req, res, next) => {
+  const id = req.params.id;
+  const user = await User.findById(id);
+  if (!user) return next(new AppError("User Not Found", 404));
+  res.status(200).json({
+    status: "Sucess",
+    data: [user],
+  });
+});
+
+// middleware to make sure when user want to access his data the id comes from the logged in user
+exports.getMe = (req, res, next) => {
+  if (!req.params.id) req.params.id = req.user._id;
+
+  next();
+};
 exports.userUpdateInfo = catchAsync(async (req, res, next) => {
   const { id } = req.params;
   if (!id) {
