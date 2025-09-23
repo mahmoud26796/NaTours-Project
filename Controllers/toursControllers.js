@@ -12,7 +12,7 @@ exports.getAllTours = catchAsync(async (req, res) => {
     .sort()
     .limitFields()
     .paginate();
-  const tours = await featuers.query;
+  const tours = await featuers.query.explain(); // explain return stats about the query
   res.status(200).json({
     status: "success",
     results: tours.length,
