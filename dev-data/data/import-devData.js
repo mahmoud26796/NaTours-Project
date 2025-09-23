@@ -2,9 +2,11 @@ const fs = require("fs");
 const mongoose = require("mongoose");
 const Tour = require("../../models/tourModel");
 const dotenv = require("dotenv");
+const Review = require("../../models/reviewsModel");
+const User = require("../../models/userModel");
 dotenv.config({ path: "./config.env" });
 
-console.log(process.env.DATABASE)
+console.log(process.env.DATABASE);
 const DB = process.env.DATABASE.replace(
   "<db_password>",
   process.env.DATABASE_PASSWORD
@@ -20,10 +22,16 @@ mongoose
   .catch((e) => console.log(e));
 
 const tours = JSON.parse(fs.readFileSync(`${__dirname}/tours.json`, "utf-8"));
+const reviews = JSON.parse(
+  fs.readFileSync(`${__dirname}/reviews.json`, "utf-8")
+);
+const users = JSON.parse(fs.readFileSync(`${__dirname}/users.json`, "utf-8"));
 
 const importData = async () => {
   try {
-    await Tour.create(tours);
+    await Tour.create(tours, { validateBeforeSave: false });
+    await Review.create(reviews, { validateBeforeSave: false });
+    await User.create(users, { validateBeforeSave: false });
     console.log("Data Loaded Successfully");
   } catch (error) {
     console.log(error);
@@ -34,6 +42,8 @@ const importData = async () => {
 const deleteData = async () => {
   try {
     await Tour.deleteMany({});
+    await Review.deleteMany();
+    await User.deleteMany();
     console.log("Data Deleted Successfully");
   } catch (error) {
     console.log(error);
