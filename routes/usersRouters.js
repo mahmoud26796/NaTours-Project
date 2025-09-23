@@ -14,6 +14,7 @@ const {
   forgotPassword,
   resetPassword,
   updatePassword,
+  restrictTo,
 } = require("../Controllers/authControllers");
 
 const router = express.Router();
@@ -26,14 +27,18 @@ router.route("/forgotPassword").post(forgotPassword);
 
 router.route("/resetPassword/:token").patch(resetPassword);
 
+// this middleware applies for all the following routes
+router.use(protect);
+
 router.route("/updatePassword").patch(updatePassword);
 
-router.route("/updateInfo/:id").patch(protect, userUpdateInfo);
+router.route("/updateInfo/:id").patch(userUpdateInfo);
 
-router.route("/deleteAccount/:id").delete(protect, deleteUserAccount);
+router.route("/deleteAccount/:id").delete(deleteUserAccount);
 
-router.route("/me").get(protect, getMe, getUserById);
+router.route("/me").get(getMe, getUserById);
 
+router.use(restrictTo("admin", "lead-guide"));
 router.route("/:id").get(getUserById);
 
 router.route("/").get(getAllUsers);

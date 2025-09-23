@@ -19,16 +19,13 @@ const { addReview } = require("../Controllers/reviewsController");
 // merged params logic
 router.use("/:tourId/reviews", reviewsRouter);
 // tours routes
+router.route("/tours-stats").get(getToursStats);
+router.route("/monthly-plan/:year").get(getMonthlyPlan);
 router
   .route("/")
   .get(protect, getAllTours)
   .post(addNewTour)
   .post(protect, restrictTo("user"), addReview);
-router
-  .route("/:id")
-  .get(getTourByID)
-  .patch(updateTour)
-  .delete(protect, restrictTo("admin", "lead-guide"), removeTour);
-router.route("/tours-stats").get(getToursStats);
-router.route("/monthly-plan/:year").get(getMonthlyPlan);
+router.use(protect, restrictTo("admin", "lead-guide"));
+router.route("/:id").get(getTourByID).patch(updateTour).delete(removeTour);
 module.exports = router;
