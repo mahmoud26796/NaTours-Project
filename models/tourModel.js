@@ -151,6 +151,9 @@ tourSchema.pre("aggregate", function (next) {
 //   this.guides = await Promise.all(promises);
 //   next();
 // });
+
+tourSchema.index({ price: 1, ratingsAverage: -1 }); // indexes with those field for performance
+tourSchema.index({ slug: 1 });
 const Tour = mongoose.model("Tour", tourSchema);
 
 module.exports = Tour;
