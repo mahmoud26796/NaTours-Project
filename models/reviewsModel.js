@@ -66,6 +66,9 @@ reviewsSchema.statics.calculateRatingsAvg = async function (tourId) {
     });
   }
 };
+// preventing duplicates in reviews by the same user
+reviewsSchema.index({ tour: 1, user: 1 }, { unique: true });
+
 reviewsSchema.pre(/^find/, function (next) {
   this.populate({
     path: "user",
@@ -77,6 +80,15 @@ reviewsSchema.pre(/^find/, function (next) {
 // before save the new doc (review) call the calc rating avg function
 reviewsSchema.post("save", function () {
   this.constructor.calculateRatingsAvg(this.tour);
+});
+
+reviewsSchema.pre(/^findOneAnd/, async function (next) {
+  this.r = await this.findOne();
+  next();
+});
+
+reviewsSchema.post(/^findOneAnd/, async function () {
+  await this.r.constructor.calculateRatingsAvg(this.r.tour);
 });
 const Review = mongoose.model("Review", reviewsSchema);
 
