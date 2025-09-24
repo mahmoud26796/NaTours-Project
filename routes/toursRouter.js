@@ -10,6 +10,7 @@ const {
   removeTour,
   getToursStats,
   getMonthlyPlan,
+  gettoursWithin,
 } = require("../Controllers/toursControllers");
 const { protect, restrictTo } = require("../Controllers/authControllers");
 
@@ -26,6 +27,7 @@ router
   .get(protect, getAllTours)
   .post(addNewTour)
   .post(protect, restrictTo("user"), addReview);
+router.route("/tours-within/:distance/center/:lating/unit/:unit").get(gettoursWithin);
 router.use(protect, restrictTo("admin", "lead-guide"));
 router.route("/:id").get(getTourByID).patch(updateTour).delete(removeTour);
 module.exports = router;

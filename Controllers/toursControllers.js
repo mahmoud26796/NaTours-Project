@@ -126,3 +126,30 @@ exports.getMonthlyPlan = catchAsync(async (req, res) => {
     },
   });
 });
+
+// get tours within a specific distance
+///tours-within/:distance/center/:lating/unit/:unit
+exports.gettoursWithin = catchAsync((req, res, next) => {
+  const { distance, lating, unit } = req.params;
+  const [lat, long] = lating;
+
+  if (!lat || !long) {
+    return next(
+      new AppError("Please Provide Latitude and Longtiude Respectivly")
+    );
+  }
+  //getting the radius from the distance (need to be divided by the radius of earth :D)
+  const radius = unit === "mi" ? distance / 3963.2 : distance / 6378.1; // checking for the unit
+  const tours = Tour.find({
+    startLocations: {
+      $geoWithin: { $centerSphere: [[lat, long], radius] }, // will get the nearest tours for the user within the radius
+    },
+  });
+  res.status(200).json({
+    status: "Success",
+    results: tours.length,
+    data: {
+      data: tours,
+    },
+  });
+});

@@ -155,6 +155,7 @@ tourSchema.pre("aggregate", function (next) {
 
 tourSchema.index({ price: 1, ratingsAverage: -1 }); // indexes with those field for performance
 tourSchema.index({ slug: 1 });
+tourSchema.index({ startLocations: "2dsphere" });
 const Tour = mongoose.model("Tour", tourSchema);
 
 module.exports = Tour;
