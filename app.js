@@ -1,8 +1,8 @@
-const morgan = require("morgan");
-const express = require("express");
-const AppError = require("./utils/appError");
-const errorHandler = require("./Controllers/errorController");
-const conf = require("./");
+const morgan = require("morgan"),
+  express = require("express"),
+  AppError = require("./utils/appError"),
+  errorHandler = require("./Controllers/errorController"),
+  path = require("path");
 // Routers
 // tours routes
 const tourRouter = require("./routes/toursRouter");
@@ -60,6 +60,14 @@ app.use(
 app.use(express.json());
 app.use(express.static(`${__dirname}/public`));
 
+//using the template enigine (PUG)
+app.set("view engine", "pug");
+app.set("views", path.join(__dirname, "views"));
+
+// main routes
+app.get("/", (req, res) => {
+  res.status(200).render("base");
+});
 app.use("/api/v1/tours", tourRouter);
 
 app.use("/api/v1/users", usersRouter);
