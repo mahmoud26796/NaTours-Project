@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Tour = require("./tourModel");
 const reviewsSchema = mongoose.Schema(
   {
     review: {
@@ -36,6 +37,35 @@ const reviewsSchema = mongoose.Schema(
   }
 );
 
+/*
+this is a function on the model schema that will calculate the ratings average 
+by aggregation pipeline 
+*/
+reviewsSchema.statics.calculateRatingsAvg = async function (tourId) {
+  const stats = await this.aggregate([
+    { $match: { tour: tourId } },
+    {
+      $group: {
+        _id: "tour",
+        nratings: { $sum: 1 },
+        avgRatings: { $avg: "$rating" },
+      },
+    },
+  ]);
+  // save the updated info for each tour after each new reivew is added
+  if (stats.length > 0) {
+    // make sure if there is no reviews no error produced to the client
+    await Tour.findByIdAndUpdate(tourId, {
+      ratingsAverage: stats[0].avgRatings,
+      ratingsQuantity: stats[0].nRatings,
+    });
+  } else {
+    await Tour.findByIdAndUpdate(tourId, {
+      ratingsAverage: 0,
+      ratingsQuantity: 4.5,
+    });
+  }
+};
 reviewsSchema.pre(/^find/, function (next) {
   this.populate({
     path: "user",
@@ -44,6 +74,10 @@ reviewsSchema.pre(/^find/, function (next) {
   next();
 });
 
+// before save the new doc (review) call the calc rating avg function
+reviewsSchema.post("save", function () {
+  this.constructor.calculateRatingsAvg(this.tour);
+});
 const Review = mongoose.model("Review", reviewsSchema);
 
 module.exports = Review;
