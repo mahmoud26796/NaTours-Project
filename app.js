@@ -10,6 +10,8 @@ const tourRouter = require("./routes/toursRouter");
 const usersRouter = require("./routes/usersRouters");
 //Reviews Router
 const reviewsRouter = require("./routes/reviewsRouter");
+//Views Router
+const viewsRouter = require("./routes/viewsRouter");
 // Routers
 //security packages
 const rateLimit = require("express-rate-limit");
@@ -65,25 +67,9 @@ app.set("view engine", "pug");
 app.set("views", path.join(__dirname, "views"));
 
 // main routes
-app.get("/", (req, res) => {
-  res.status(200).render("base", {
-    user: {
-      name: "jonas",
-    },
-  });
-});
-app.get("/overview", (req, res) => {
-  res.status(200).render("overview", {
-    data: "All Tours",
-  });
-});
-app.get("/tour", (req, res) => {
-  res.status(200).render("tour", {
-    tour: {
-      name: "The Arabic Shine",
-    },
-  });
-});
+
+app.use("/", viewsRouter);
+
 app.use("/api/v1/tours", tourRouter);
 
 app.use("/api/v1/users", usersRouter);
