@@ -66,7 +66,12 @@ app.set("views", path.join(__dirname, "views"));
 
 // main routes
 app.get("/", (req, res) => {
-  res.status(200).render("base");
+  res.status(200).render("base", {
+    tour: "The Arabic Shine",
+    user: {
+      name: "jonas",
+    },
+  });
 });
 app.use("/api/v1/tours", tourRouter);
 
