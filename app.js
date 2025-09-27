@@ -67,9 +67,20 @@ app.set("views", path.join(__dirname, "views"));
 // main routes
 app.get("/", (req, res) => {
   res.status(200).render("base", {
-    tour: "The Arabic Shine",
     user: {
       name: "jonas",
+    },
+  });
+});
+app.get("/overview", (req, res) => {
+  res.status(200).render("overview", {
+    data: "All Tours",
+  });
+});
+app.get("/tour", (req, res) => {
+  res.status(200).render("tour", {
+    tour: {
+      name: "The Arabic Shine",
     },
   });
 });
