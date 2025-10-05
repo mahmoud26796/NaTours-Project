@@ -1,4 +1,7 @@
+const Review = require("../models/reviewsModel");
 const Tour = require("../models/tourModel");
+const User = require("../models/userModel");
+
 const catchAsync = require("../utils/catchAsync");
 
 exports.renderRoot = catchAsync(async (req, res) => {
@@ -10,10 +13,8 @@ exports.renderAllTours = catchAsync(async (req, res) => {
   res.status(200).render("overview", { tours });
 });
 
-exports.renderTour = (req, res) => {
-  res.status(200).render("tour", {
-    tour: {
-      name: "The Arabic Shine",
-    },
-  });
-};
+exports.renderTour = catchAsync(async (req, res) => {
+  const _id = req.params.id;
+  const tour = await Tour.findById({ _id });
+  res.status(200).render("tour", { tour });
+});

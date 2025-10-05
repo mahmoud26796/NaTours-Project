@@ -464,6 +464,7 @@ body {
     -webkit-box-pack: center;
     -ms-flex-pack: center;
     justify-content: center;
+    margin-bottom: 150px;
 }
 
 .overview-box__group:not(:last-child) {

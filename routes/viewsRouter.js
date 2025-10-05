@@ -7,8 +7,9 @@ const {
 const { render } = require("../app");
 const router = express.Router();
 
-router.get("/", renderRoot);
-router.get("/overview", renderAllTours);
-router.get("/tour", renderTour);
+router.get("/", renderAllTours);
+// router.get("/overview", renderAllTours);
+router.get("/tour/:id", renderTour);
+// router.get("/tour", renderTour);
 
 module.exports = router;
