@@ -20,11 +20,11 @@ const xss = require("xss-clean");
 const app = express();
 const mongoSanitize = require("express-mongo-sanitize");
 const hpp = require("hpp");
+const cookieParser = require("cookie-parser");
 //security packages
 
 //setting http headers
 // app.use(helmet());
-
 //dev environment logging
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
@@ -58,7 +58,12 @@ app.use(
     ],
   })
 );
+app.use(cookieParser());
 
+app.use((req, res, next) => {
+  console.log(req.cookies);
+  next();
+});
 app.use(express.json());
 app.use(express.static(`${__dirname}/public`));
 
