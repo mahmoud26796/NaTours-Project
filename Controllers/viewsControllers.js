@@ -4,8 +4,8 @@ const User = require("../models/userModel");
 
 const catchAsync = require("../utils/catchAsync");
 
-exports.renderRoot = catchAsync(async (req, res) => {
-  res.status(200).render("base");
+exports.renderLoginPage = catchAsync(async (req, res) => {
+  res.status(200).render("login");
 });
 
 exports.renderAllTours = catchAsync(async (req, res) => {
@@ -14,7 +14,7 @@ exports.renderAllTours = catchAsync(async (req, res) => {
 });
 
 exports.renderTour = catchAsync(async (req, res) => {
-  const _id = req.params.id;
-  const tour = await Tour.findById({ _id });
+  const slug = req.params.slug;
+  const tour = await Tour.findOne({ slug });
   res.status(200).render("tour", { tour });
 });
