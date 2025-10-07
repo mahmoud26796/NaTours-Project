@@ -105,17 +105,23 @@ exports.protect = catchAsync(async (req, res, next) => {
 
 //check if the user logged in for the renderd pages
 exports.isLoggedIn = catchAsync(async (req, res, next) => {
-  if (req.cookies.jwt) {
-    const decoded = await promisify(jwt.verify)(
-      req.cookies.jwt,
-      process.env.JWT_SECRET_TOKEN
-    );
-    const user = await User.findById(decoded.id);
+  try {
+    if (req.cookies.jwt) {
+      const decoded = await promisify(jwt.verify)(
+        req.cookies.jwt,
+        process.env.JWT_SECRET_TOKEN
+      );
+      const user = await User.findById(decoded.id);
 
-    if (!user) return next();
+      if (!user) return next();
 
-    if (user.isPasswordChanged(decoded.iat)) return next();
-    res.locals.user = user;
+      if (user.isPasswordChanged(decoded.iat)) return next();
+
+      res.locals.user = user;
+      return next();
+    }
+  } catch (e) {
+    return next(e);
   }
   next();
 });
