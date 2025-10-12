@@ -127,7 +127,7 @@ exports.isLoggedIn = catchAsync(async (req, res, next) => {
 
       if (user.isPasswordChanged(decoded.iat)) return next();
 
-      res.locals.user = user;
+      res.locals.user = user; // making the user accessed for our templates
       return next();
     }
   } catch (e) {

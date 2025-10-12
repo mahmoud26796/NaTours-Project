@@ -21,3 +21,8 @@ exports.renderTour = catchAsync(async (req, res) => {
   }
   res.status(200).render("tour", { tour });
 });
+
+exports.renderAccountPage = catchAsync(async (req, res) => {
+  // const user = await User.findById();
+  res.status(200).render("account");
+});
