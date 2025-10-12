@@ -1,7 +1,7 @@
 const Review = require("../models/reviewsModel");
 const Tour = require("../models/tourModel");
 const User = require("../models/userModel");
-
+const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 
 exports.renderLoginPage = catchAsync(async (req, res) => {
@@ -16,5 +16,8 @@ exports.renderAllTours = catchAsync(async (req, res) => {
 exports.renderTour = catchAsync(async (req, res) => {
   const slug = req.params.slug;
   const tour = await Tour.findOne({ slug });
+  if (!tour) {
+    return next(new AppError("No Tour With That Name Found", 404));
+  }
   res.status(200).render("tour", { tour });
 });

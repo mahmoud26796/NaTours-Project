@@ -1,27 +1,43 @@
 const AppError = require("../utils/appError");
 
-const devErrors = (err, res) => {
-  res.status(err.statusCode).json({
-    status: err.statusCode,
-    err: err,
-    message: err.message,
-    stack: err.stack,
-  });
+const errOps = {
+  title: "Error Page",
+  message: "Tour Not Found",
 };
 
-const prodErrors = (err, res) => {
-  console.error("Error", err);
-  if (err.isOperational) {
-    res.status(err.statusCode).json({
-      status: err.status,
+const devErrors = (err, req, res) => {
+  // api error in Dev Env
+  if (req.originalUrl.startsWith("/api")) {
+    return res.status(err.statusCode).json({
+      status: err.statusCode,
+      err: err,
       message: err.message,
+      stack: err.stack,
     });
-  } else {
-    res.status(500).json({
+  }
+  // Renderd Website Error Page In Dev Env
+  errOps.status = err.statusCode;
+  return res.render("error", errOps);
+};
+
+const prodErrors = (err, req, res) => {
+  // api error in prod env
+  if (req.originalUrl.startsWith("/api")) {
+    console.error("Error", err);
+    if (err.isOperational) {
+      return res.status(err.statusCode).json({
+        status: err.status,
+        message: err.message,
+      });
+    }
+    return res.status(500).json({
       status: "Fail",
       message: "Something Went Wrong!",
     });
   }
+  // rendered website error page in dev env
+  errOps.status = err.statusCode;
+  return res.render("error", errOps);
 };
 
 const handleCastErrorsDB = (err) => {
@@ -49,7 +65,7 @@ module.exports = (err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || "err";
   if (process.env.NODE_ENV === "development") {
-    devErrors(err, res);
+    devErrors(err, req, res);
   } else if (process.env.NODE_ENV === "production") {
     let error = { ...err };
     if (err.name === "CastError") error = handleCastErrorsDB(error);
@@ -58,6 +74,6 @@ module.exports = (err, req, res, next) => {
     else if (err.name === "jsonWebTokenError") error = handleJWTError();
     else if (err.name === "TokenExpiredError") error = handleJWTExpiration();
     if (err.code === 11000) error = handleDuplicatesDB(error);
-    prodErrors(error, res);
+    prodErrors(error, req, res);
   }
 };
