@@ -12,8 +12,8 @@ header.header
         if user
             a.nav__el.nav__el--logout Log out
             a.nav__el(href='/me')
-            img.nav__user-img(src=`../imgs/users/user-15.jpg` alt=`Photo of ${user.name}`)
-            span(style="color: white; font-size: 16px;")=user.name.split(' ')[0].toUpperCase()
+                img.nav__user-img(src=`../imgs/users/user-15.jpg` alt=`Photo of ${user.name}`)
+                span(style="color: white; font-size: 16px;")=user.name.split(' ')[0].toUpperCase()
         else
             a.nav__el(href='/login') Log in
             a.nav__el.nav__el(href='#') Sign up
