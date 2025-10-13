@@ -1,0 +1,23 @@
+import axios from "axios";
+
+export const updateUSerSettings = async (name, email) => {
+  try {
+    const res = await axios({
+      method: "PATCH",
+      url: "http://localhost:5000/api/v1/users/updateMe",
+      data: {
+        name,
+        email,
+      },
+    });
+    console.log(res.data);
+    if (res.status === "success") {
+      alert("Data Changed Successfuly!");
+      window.setTimeout(() => {
+        location.reload();
+      }, 500);
+    }
+  } catch (e) {
+    console.log(e.response.data);
+  }
+};
