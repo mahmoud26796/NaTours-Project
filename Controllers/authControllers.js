@@ -215,11 +215,13 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
 
 exports.updatePassword = catchAsync(async (req, res, next) => {
   // 1- get user from collection
-  const { email, password } = req.body;
-  if (!email || !password) {
-    return next(new AppError("Please Provide Email And Password", 401));
+  const { password } = req.body;
+  if (!password) {
+    return next(new AppError("Please Provide Password", 401));
   }
-  const user = await User.findOne({ email }).select("+password");
+  const user = await User.findOne({ email: req.user.email }).select(
+    "+password"
+  );
   if (!user) {
     return next(new AppError("User Not Found", 404));
   }
