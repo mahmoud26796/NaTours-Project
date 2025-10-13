@@ -62,4 +62,35 @@ exports.userUpdateInfo = catchAsync(async (req, res, next) => {
   });
 });
 
+//updates user withoout the id from the url (current user)
+exports.updateMe = catchAsync(async (req, res, next) => {
+  if (req.body.password || req.body.passwordConfirm) {
+    return next(
+      new AppError(
+        "This route is not for password updates. Please use /updateMyPassword.",
+        400
+      )
+    );
+  }
+
+  const updatedUser = await User.findByIdAndUpdate(
+    req.user.id,
+    {
+      name: req.body.name,
+      email: req.body.email,
+    },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+
+  res.status(200).json({
+    status: "success",
+    data: {
+      user: updatedUser,
+    },
+  });
+});
+
 exports.deleteUserAccount = deleteOne(User);
