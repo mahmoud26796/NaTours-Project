@@ -1,11 +1,39 @@
-const fs = require("fs");
-const catchAsync = require("../utils/catchAsync");
-const User = require("../models/userModel");
-const AppError = require("../utils/appError");
-const { deleteOne } = require("./handlerFacory");
-// users resource
-// reading users data from txt file
-// const users = JSON.parse(fs.readFileSync(`./dev-data/data/users.json`));
+//                                                USER RESOURCE
+
+const fs = require("fs"),
+  catchAsync = require("../utils/catchAsync"),
+  User = require("../models/userModel"),
+  AppError = require("../utils/appError"),
+  { deleteOne } = require("./handlerFacory"),
+  multer = require("multer"),
+  path = require("path");
+
+/**
+ *  reading users data from txt file
+ * const users = JSON.parse(fs.readFileSync(`./dev-data/data/users.json`));
+ */
+
+// multer desk storage config
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "../public/imgs/users");
+  },
+  filename: function (req, file, cb) {
+    const name = `user-${req.user.id}-${Math.floor(
+      Date.now() / 10000000000
+    )}${path.extname(file.originalname)}`;
+    cb(null, name);
+  },
+});
+
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith("image")) cb(null, true);
+  else cb(new AppError("oly images can be uploaded", 400), false);
+};
+
+const upload = multer({ storage, fileFilter });
+
+exports.uploadUserImage = upload.single("photo");
 
 exports.getAllUsers = catchAsync(async (req, res) => {
   const users = await User.find({});
@@ -72,18 +100,17 @@ exports.updateMe = catchAsync(async (req, res, next) => {
       )
     );
   }
-
-  const updatedUser = await User.findByIdAndUpdate(
-    req.user.id,
-    {
-      name: req.body.name,
-      email: req.body.email,
-    },
-    {
-      new: true,
-      runValidators: true,
-    }
-  );
+  let reqObj = {
+    name: req.body.name,
+    email: req.body.email,
+  };
+  if (req.file) {
+    reqObj.photo = req.file.filename;
+  }
+  const updatedUser = await User.findByIdAndUpdate(req.user.id, reqObj, {
+    new: true,
+    runValidators: true,
+  });
 
   res.status(200).json({
     status: "success",
