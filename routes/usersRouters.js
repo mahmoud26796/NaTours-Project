@@ -6,7 +6,8 @@ const {
   getMe,
   userUpdateInfo,
   updateMe,
-  uploadUserImage,
+  uploadUserPhoto,
+  resizeUserPhoto,
   deleteUserAccount,
 } = require("../Controllers/usersControllers");
 const {
@@ -38,7 +39,7 @@ router.route("/updatePassword").patch(updatePassword);
 
 router.route("/updateInfo/:id").patch(userUpdateInfo);
 
-router.route("/updateMe").patch(uploadUserImage, updateMe);
+router.route("/updateMe").patch(uploadUserPhoto, resizeUserPhoto, updateMe);
 
 router.route("/deleteAccount/:id").delete(deleteUserAccount);
 
