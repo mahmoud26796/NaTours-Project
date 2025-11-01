@@ -39,10 +39,10 @@ block content
                     form.form.form-user-data
                         .form__group
                             label.form__label(for='name') Name
-                            input#name.form__input(type='text', required, name='name')
+                            input#name.form__input(type='text' name='name')
                         .form__group.ma-bt-md
                             label.form__label(for='email') Email address
-                            input#email_set.form__input(type='email', required, name='email')
+                            input#email_set.form__input(type='email' name='email')
                         .form__group.form__photo-upload
                             if user.photo
                                 img.nav__user-img(src=`../imgs/users/${user.photo}` alt=`Photo of ${user.name}`)

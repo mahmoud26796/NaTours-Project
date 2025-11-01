@@ -12852,7 +12852,7 @@ function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { 
 function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
 function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 var updateUSerSettings = exports.updateUSerSettings = /*#__PURE__*/function () {
-  var _ref = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee(name, email) {
+  var _ref = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee(data) {
     var res, _t;
     return _regenerator().w(function (_context) {
       while (1) switch (_context.p = _context.n) {
@@ -12862,10 +12862,7 @@ var updateUSerSettings = exports.updateUSerSettings = /*#__PURE__*/function () {
           return (0, _axios.default)({
             method: "PATCH",
             url: "http://localhost:5000/api/v1/users/updateMe",
-            data: {
-              name: name,
-              email: email
-            }
+            data: data
           });
         case 1:
           res = _context.v;
@@ -12887,7 +12884,7 @@ var updateUSerSettings = exports.updateUSerSettings = /*#__PURE__*/function () {
       }
     }, _callee, null, [[0, 2]]);
   }));
-  return function updateUSerSettings(_x, _x2) {
+  return function updateUSerSettings(_x) {
     return _ref.apply(this, arguments);
   };
 }();
@@ -12928,7 +12925,7 @@ var updateUserPassword = exports.updateUserPassword = /*#__PURE__*/function () {
       }
     }, _callee2, null, [[0, 2]]);
   }));
-  return function updateUserPassword(_x3, _x4, _x5) {
+  return function updateUserPassword(_x2, _x3, _x4) {
     return _ref2.apply(this, arguments);
   };
 }();
@@ -13071,13 +13068,17 @@ var _mapbox = require("./mapbox");
 var _logout = require("./logout");
 var _updateSettings = require("./updateSettings");
 var mapbox = document.getElementById("map"),
+  //login form inputs
   loginForm = document.querySelector(".form"),
-  settingsForm = document.querySelector(".form-user-data"),
   email = document.getElementById("email"),
   password = document.getElementById("password"),
   logOutBtn = document.querySelector(".nav__el--logout"),
+  // user data and settings form inputs
+  settingsForm = document.querySelector(".form-user-data"),
   name = document.getElementById("name"),
   email_set = document.getElementById("email_set"),
+  photo = document.getElementById("photo"),
+  // password changes form inputs
   passwordForm = document.querySelector(".form-user-password"),
   currentPass = document.getElementById("password-current"),
   newPass = document.getElementById("password"),
@@ -13098,7 +13099,12 @@ if (logOutBtn) {
 if (settingsForm) {
   settingsForm.addEventListener("submit", function (e) {
     e.preventDefault();
-    (0, _updateSettings.updateUSerSettings)(name.value, email_set.value);
+    var formData = new FormData();
+    formData.append("name", name.value);
+    formData.append("email", email_set.value);
+    formData.append("photo", photo.files[0]);
+    console.log(name.value, email_set.value, photo.files);
+    (0, _updateSettings.updateUSerSettings)(formData);
   });
 }
 if (passwordForm) {
@@ -13133,7 +13139,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63186" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63963" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

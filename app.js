@@ -59,11 +59,7 @@ app.use(
   })
 );
 app.use(cookieParser());
-
-app.use((req, res, next) => {
-  console.log(req.cookies);
-  next();
-});
+;
 app.use(express.json());
 app.use(express.static(`${__dirname}/public`));
 

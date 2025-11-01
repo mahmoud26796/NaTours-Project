@@ -5,13 +5,17 @@ import { logOutUI } from "./logout";
 import { updateUSerSettings, updateUserPassword } from "./updateSettings";
 
 const mapbox = document.getElementById("map"),
+  //login form inputs
   loginForm = document.querySelector(".form"),
-  settingsForm = document.querySelector(".form-user-data"),
   email = document.getElementById("email"),
   password = document.getElementById("password"),
   logOutBtn = document.querySelector(".nav__el--logout"),
+  // user data and settings form inputs
+  settingsForm = document.querySelector(".form-user-data"),
   name = document.getElementById("name"),
   email_set = document.getElementById("email_set"),
+  photo = document.getElementById("photo"),
+  // password changes form inputs
   passwordForm = document.querySelector(".form-user-password"),
   currentPass = document.getElementById("password-current"),
   newPass = document.getElementById("password"),
@@ -36,7 +40,13 @@ if (logOutBtn) {
 if (settingsForm) {
   settingsForm.addEventListener("submit", (e) => {
     e.preventDefault();
-    updateUSerSettings(name.value, email_set.value);
+    const formData = new FormData();
+    formData.append("name", name.value);
+    formData.append("email", email_set.value);
+    formData.append("photo", photo.files[0]);
+    console.log(name.value, email_set.value, photo.files);
+
+    updateUSerSettings(formData);
   });
 }
 
