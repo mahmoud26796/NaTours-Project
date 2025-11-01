@@ -16,22 +16,22 @@ const fs = require("fs"),
 // multer desk storage config
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "../public/imgs/users");
+    cb(null, "public/imgs/users");
   },
   filename: function (req, file, cb) {
-    const name = `user-${req.user.id}-${Math.floor(
-      Date.now() / 10000000000
-    )}${path.extname(file.originalname)}`;
+    const name = `user-${req.user.id}-${Math.floor(Date.now() / 10000000000)}.${
+      file.mimetype.split("/")[1]
+    }`;
     cb(null, name);
   },
 });
 
-const fileFilter = (req, file, cb) => {
+const multerFilter = (req, file, cb) => {
   if (file.mimetype.startsWith("image")) cb(null, true);
   else cb(new AppError("oly images can be uploaded", 400), false);
 };
 
-const upload = multer({ storage, fileFilter });
+const upload = multer({ storage, fileFilter: multerFilter });
 
 exports.uploadUserImage = upload.single("photo");
 
