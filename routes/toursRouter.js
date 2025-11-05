@@ -3,6 +3,7 @@ const reviewsRouter = require("./reviewsRouter");
 const router = express.Router();
 // Controllers
 const {
+  uploadTourPictures,
   getAllTours,
   getTourByID,
   addNewTour,
@@ -25,9 +26,15 @@ router.route("/monthly-plan/:year").get(getMonthlyPlan);
 router
   .route("/")
   .get(protect, getAllTours)
-  .post(addNewTour)
+  .post(uploadTourPictures, addNewTour)
   .post(protect, restrictTo("user"), addReview);
-router.route("/tours-within/:distance/center/:lating/unit/:unit").get(gettoursWithin);
+router
+  .route("/tours-within/:distance/center/:lating/unit/:unit")
+  .get(gettoursWithin);
 router.use(protect, restrictTo("admin", "lead-guide"));
-router.route("/:id").get(getTourByID).patch(updateTour).delete(removeTour);
+router
+  .route("/:id")
+  .get(getTourByID)
+  .patch(uploadTourPictures, updateTour)
+  .delete(removeTour);
 module.exports = router;

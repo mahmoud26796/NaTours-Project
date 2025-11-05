@@ -1,9 +1,58 @@
-const fs = require("fs");
-const Tour = require("../models/tourModel.js");
-const { json } = require("stream/consumers");
-const APIFeatures = require("../utils/apiFeatures.js");
-const catchAsync = require("../utils/catchAsync.js");
-const { deleteOne } = require("./handlerFacory");
+const fs = require("fs"),
+  Tour = require("../models/tourModel.js"),
+  { json } = require("stream/consumers"),
+  APIFeatures = require("../utils/apiFeatures.js"),
+  catchAsync = require("../utils/catchAsync.js"),
+  multer = require("multer"),
+  sharp = require("sharp"),
+  { deleteOne } = require("./handlerFacory");
+
+const storage = multer.memoryStorage();
+
+const multerFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith("image")) cb(null, true);
+  else cb(new AppError("only images can be uploaded", 400), false);
+};
+const upload = multer({ storage, fileFilter: multerFilter });
+
+// uploading tour pictures
+exports.uploadTourPictures = upload.fields([
+  { name: "imageCover", maxCount: 1 },
+  { name: "images", maxCount: 3 },
+]);
+
+// resize tour pictures before uploading them
+exports.resizeTourPictures = catchAsync(async (req, res, next) => {
+  if (!req.files.ImageCover || !req.files.images) return next();
+
+  // making a file name to th request body by using the tour id from params
+  req.body.ImageCover = `tour-${req.params.id}-${Math.floor(
+    Date.now() / 10000000000
+  )}-cover.jpeg`;
+  await sharp(req.files.ImageCover[0].buffer)
+    .resize(2000, 1333)
+    .toFormat("jpeg")
+    .jpeg({ quality: 90 })
+    .toFile(`public/imgs/tours/${req.body.ImageCover}`);
+  // handiling and resizing the tour images and save it to the images array in the DB
+  req.body.images = [];
+  await Promise.all(
+    req.files.images.map(async (file, i) => {
+      const fileName = `tour-${req.params.id}-${Math.floor(
+        Date.now() / 10000000000
+      )}-${i + 1}.jpeg`;
+
+      await sharp(file.buffer)
+        .resize(2000, 1333)
+        .toFormat("jpeg")
+        .jpeg({ quality: 90 })
+        .toFile(`public/imgs/tours/${fileName}`);
+
+      req.body.images.push(fileName);
+    })
+  );
+  next();
+});
 
 exports.getAllTours = catchAsync(async (req, res) => {
   // the final query
