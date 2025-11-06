@@ -5,7 +5,7 @@ const AppError = require(".././utils/appError");
 const { promisify } = require("util");
 
 // send mails for users
-const sendEmail = require("../utils/email.js");
+const Email = require("../utils/email.js");
 const crypto = require("crypto");
 
 //creates a new token for the user
@@ -45,7 +45,8 @@ exports.signUp = catchAsync(async (req, res, next) => {
     passwordConfirm,
     role,
   });
-
+  const url = `${req.protocol}://${req.host}/me`;
+  await new Email(newUser, url).sendWelcome();
   res.data = {
     user: newUser,
   };
@@ -165,11 +166,11 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
 
   // using the send email function that will create the mail with the options to send to the user
   try {
-    await sendEmail({
-      email: user.email,
-      sunject: "This Link Valid For 10 Minutes",
-      message,
-    });
+    // await sendEmail({
+    //   email: user.email,
+    //   sunject: "This Link Valid For 10 Minutes",
+    //   message,
+    // });
     res.status(200).json({
       status: "Success",
       message: "Token sent To email",
