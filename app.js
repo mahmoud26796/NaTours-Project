@@ -12,6 +12,8 @@ const usersRouter = require("./routes/usersRouters");
 const reviewsRouter = require("./routes/reviewsRouter");
 //Views Router
 const viewsRouter = require("./routes/viewsRouter");
+//bookings router
+const bookingsRouter = require("./routes/bookingRouter");
 // Routers
 //security packages
 const rateLimit = require("express-rate-limit");
@@ -59,7 +61,6 @@ app.use(
   })
 );
 app.use(cookieParser());
-;
 app.use(express.json());
 app.use(express.static(`${__dirname}/public`));
 
@@ -76,6 +77,8 @@ app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", usersRouter);
 
 app.use("/api/v1/reviews", reviewsRouter);
+
+app.use("/api/v1/bookings", bookingsRouter);
 
 app.all("/api/v1{/*path}", (req, res, next) => {
   // const error = new Error(`Can't Find The Requested URL ${req.originalUrl} on this Server`);
