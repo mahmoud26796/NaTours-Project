@@ -59,10 +59,13 @@ exports.login = catchAsync(async (req, res, next) => {
     return next(new AppError("Please Provide Email and Password", 400));
 
   const user = await User.findOne({ email }).select("+password");
+  if (!user)
+    return next(new AppError("Please Enter The Correct Email Address", 401));
+
   const isCorrectPassword = await user.correct(password, user.password);
 
-  if (!user || !isCorrectPassword)
-    return next(new AppError("Email Or Password is Incorrect!", 401));
+  if (!isCorrectPassword)
+    return next(new AppError("Password is Incorrect!", 401));
 
   sendJWT(user, 200, res);
 });
