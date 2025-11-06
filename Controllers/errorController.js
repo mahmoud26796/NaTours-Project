@@ -32,7 +32,7 @@ const prodErrors = (err, req, res) => {
     }
     return res.status(500).json({
       status: "Fail",
-      message: "Something Went Wrong!",
+      message: err.response,
     });
   }
   // rendered website error page in dev env
