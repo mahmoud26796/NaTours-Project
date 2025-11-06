@@ -26,7 +26,7 @@ module.exports = class Email {
     });
   }
 
-  async send(template, subject) {
+  async send(template, subject, optionalMsg = "None") {
     const html = pug.renderFile(
       `${__dirname}/../views/emails/${template}.pug`,
       {
@@ -50,5 +50,13 @@ module.exports = class Email {
     //uses send method
     await this.send("welcome", "Welcome To The Natours Family!");
     // passes the pug template name to the send method along side the subject line
+  }
+
+  async sendPasswordReset(IgnoreMsgOption) {
+    await this.send(
+      "passwordReset",
+      "Your reset password token valid only for 10 minutes",
+      IgnoreMsgOption
+    );
   }
 };
