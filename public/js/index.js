@@ -3,7 +3,7 @@ import { login } from "./login";
 import { displayMap } from "./mapbox";
 import { logOutUI } from "./logout";
 import { updateUSerSettings, updateUserPassword } from "./updateSettings";
-
+import { bookTour } from "./stripe";
 const mapbox = document.getElementById("map"),
   //login form inputs
   loginForm = document.querySelector(".form"),
@@ -19,7 +19,9 @@ const mapbox = document.getElementById("map"),
   passwordForm = document.querySelector(".form-user-password"),
   currentPass = document.getElementById("password-current"),
   newPass = document.getElementById("password"),
-  passConfirm = document.getElementById("password-confirm");
+  passConfirm = document.getElementById("password-confirm"),
+  //book a tour btn
+  bookTourBtn = document.getElementById("book-tour");
 
 if (mapbox) {
   const locations = JSON.parse(mapbox.dataset.locations);
@@ -55,5 +57,13 @@ if (passwordForm) {
     e.preventDefault();
     updateUserPassword(currentPass.value, newPass.value, passConfirm.value);
     // console.log(currentPass.value, newPass.value, passConfirm.value);
+  });
+}
+
+if (bookTourBtn) {
+  bookTourBtn.addEventListener("click", (e) => {
+    e.target.textContent = "Processing...";
+    const { tourId } = e.target.dataset;
+    bookTour(tourId);
   });
 }
