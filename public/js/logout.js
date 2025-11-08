@@ -9,7 +9,7 @@ export const logOutUI = async () => {
     if (res.data.status === "success") {
       alert("Logged Out Suceessfuly!");
       window.setTimeout(() => {
-        location.reload(true);
+        window.location.href = "/";
       }, 1000);
     }
   } catch (e) {

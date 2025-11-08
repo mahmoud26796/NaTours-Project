@@ -12818,7 +12818,7 @@ var logOutUI = exports.logOutUI = /*#__PURE__*/function () {
           if (res.data.status === "success") {
             alert("Logged Out Suceessfuly!");
             window.setTimeout(function () {
-              location.reload(true);
+              window.location.href = "/";
             }, 1000);
           }
           _context.n = 3;
@@ -13072,7 +13072,7 @@ var mapbox = document.getElementById("map"),
   loginForm = document.querySelector(".form"),
   email = document.getElementById("email"),
   password = document.getElementById("password"),
-  logOutBtn = document.querySelector(".nav__el--logout"),
+  logOutBtn = document.getElementById("logoutUI"),
   // user data and settings form inputs
   settingsForm = document.querySelector(".form-user-data"),
   name = document.getElementById("name"),
@@ -13139,7 +13139,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58156" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58194" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

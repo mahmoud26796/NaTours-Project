@@ -9,7 +9,7 @@ const mapbox = document.getElementById("map"),
   loginForm = document.querySelector(".form"),
   email = document.getElementById("email"),
   password = document.getElementById("password"),
-  logOutBtn = document.querySelector(".nav__el--logout"),
+  logOutBtn = document.getElementById("logoutUI"),
   // user data and settings form inputs
   settingsForm = document.querySelector(".form-user-data"),
   name = document.getElementById("name"),
