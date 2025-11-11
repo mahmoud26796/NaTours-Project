@@ -1,5 +1,5 @@
 import axios from "axios";
-
+import { showAlert } from "./alerts";
 export const logOutUI = async () => {
   try {
     const res = await axios({
@@ -7,7 +7,7 @@ export const logOutUI = async () => {
       url: "http://localhost:5000/api/v1/users/logout",
     });
     if (res.data.status === "success") {
-      alert("Logged Out Suceessfuly!");
+      showAlert(res.data.status, "You Are Logged Out!");
       window.setTimeout(() => {
         window.location.href = "/";
       }, 1000);
