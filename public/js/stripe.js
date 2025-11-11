@@ -8,10 +8,14 @@ export const bookTour = async (tourId) => {
     const session = await axios(
       `http://localhost:5000/api/v1/bookings/checkout/${tourId}`
     );
+    if (session.data.status === "success") {
+    }
     console.log(session);
   } catch (e) {
     console.log(e);
   }
-
+  window.setTimeout(() => {
+    window.location.href = "/checkout";
+  }, 1000);
   // create the chekout page
 };

@@ -13,7 +13,7 @@ exports.renderAllTours = catchAsync(async (req, res) => {
   res.status(200).render("overview", { tours });
 });
 
-exports.renderTour = catchAsync(async (req, res) => {
+exports.renderTour = catchAsync(async (req, res, next) => {
   const slug = req.params.slug;
   const tour = await Tour.findOne({ slug });
   if (!tour) {
@@ -25,4 +25,8 @@ exports.renderTour = catchAsync(async (req, res) => {
 exports.renderAccountPage = catchAsync(async (req, res) => {
   // const user = await User.findById();
   res.status(200).render("account");
+});
+
+exports.renderCheckout = catchAsync((req, res) => {
+  res.render("checkout");
 });

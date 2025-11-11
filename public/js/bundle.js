@@ -12977,6 +12977,7 @@ var bookTour = exports.bookTour = /*#__PURE__*/function () {
           return (0, _axios.default)("http://localhost:5000/api/v1/bookings/checkout/".concat(tourId));
         case 1:
           session = _context.v;
+          if (session.data.status === "success") {}
           console.log(session);
           _context.n = 3;
           break;
@@ -12985,6 +12986,11 @@ var bookTour = exports.bookTour = /*#__PURE__*/function () {
           _t = _context.v;
           console.log(_t);
         case 3:
+          window.setTimeout(function () {
+            window.location.href = "/checkout";
+          }, 1000);
+          // create the chekout page
+        case 4:
           return _context.a(2);
       }
     }, _callee, null, [[0, 2]]);
