@@ -12,5 +12,5 @@ router.get("/login", renderLoginPage);
 router.use(isLoggedIn);
 router.get("/me", renderAccountPage);
 router.get("/", renderAllTours);
-router.get("/tour/:slug", renderTour);
+router.get("/tour/:slug", protect, renderTour);
 module.exports = router;
