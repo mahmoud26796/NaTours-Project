@@ -1,7 +1,12 @@
 extends base
 
-block title 
-    title=title
-block content 
-    h1 404
-    h2.err__msg=message 
+block content
+    main.main
+        .error
+            .error__title
+            if !user
+                h2.heading-secondary.heading-secondary--error Please Login To Access This Page
+            else
+                h2.heading-secondary.heading-secondary--error Uh oh! Something went wrong!   
+                h2.error__emoji 😢 🤯
+                .error__msg=msg
