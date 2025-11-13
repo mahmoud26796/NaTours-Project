@@ -6,7 +6,6 @@ const Review = require("../../models/reviewsModel");
 const User = require("../../models/userModel");
 dotenv.config({ path: "./config.env" });
 
-console.log(process.env.DATABASE);
 const DB = process.env.DATABASE.replace(
   "<db_password>",
   process.env.DATABASE_PASSWORD

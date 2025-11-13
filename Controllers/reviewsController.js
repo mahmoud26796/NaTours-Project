@@ -4,7 +4,7 @@ const Review = require("../models/reviewsModel");
 exports.getAllReviews = catchAsync(async (req, res, next) => {
   const filterRevsForTour = {};
   if (req.params.tourId) filterRevsForTour["tour"] = req.params.tourId;
-  console.log(filterRevsForTour);
+  // console.log(filterRevsForTour);
 
   const reviews = await Review.find(filterRevsForTour);
   if (!reviews) {

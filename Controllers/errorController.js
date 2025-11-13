@@ -47,7 +47,7 @@ const handleCastErrorsDB = (err) => {
 
 const handleDuplicatesDB = (err) => {
   const val = err.keyValue.name;
-  console.log(val);
+  // console.log(val);
 
   const msg = `${val} is Duplicated Please Use Another Value`;
   return new AppError(msg, 400);

@@ -4,7 +4,7 @@ export const logOutUI = async () => {
   try {
     const res = await axios({
       method: "GET",
-      url: "http://localhost:5000/api/v1/users/logout",
+      url: "/api/v1/users/logout",
     });
     if (res.data.status === "success") {
       showAlert(res.data.status, "You Are Logged Out!");
@@ -14,7 +14,5 @@ export const logOutUI = async () => {
     }
   } catch (e) {
     console.log(e.response);
-
-    // alert("Logging Out Faild!", e);
   }
 };

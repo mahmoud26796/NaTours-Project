@@ -46,8 +46,6 @@ if (settingsForm) {
     formData.append("name", name.value);
     formData.append("email", email_set.value);
     formData.append("photo", photo.files[0]);
-    console.log(name.value, email_set.value, photo.files);
-
     updateUSerSettings(formData);
   });
 }
@@ -56,7 +54,6 @@ if (passwordForm) {
   passwordForm.addEventListener("submit", (e) => {
     e.preventDefault();
     updateUserPassword(currentPass.value, newPass.value, passConfirm.value);
-    // console.log(currentPass.value, newPass.value, passConfirm.value);
   });
 }
 
