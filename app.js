@@ -18,34 +18,29 @@ const bookingsRouter = require("./routes/bookingRouter");
 //security packages
 const rateLimit = require("express-rate-limit");
 const helmet = require("helmet");
-const xss = require("xss-clean");
 const app = express();
 const mongoSanitize = require("express-mongo-sanitize");
+const { xss } = require("express-xss-sanitizer");
 const hpp = require("hpp");
 const cookieParser = require("cookie-parser");
 //security packages
 
-//setting http headers
-// app.use(helmet());
+// security-related HTTP headers
+app.use(helmet());
+
 //dev environment logging
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
 
-// rate limiting logic
+// rate limiting logic to prevent the same ip from making to many requests
 const limiter = rateLimit({
   limit: 100,
   windowMs: 60 * 60 * 1000,
   message:
     "You Achive The Maximum Limit Of Requests Please Try Again After 1 Hour",
 });
-// app.use("/api", limiter);
-
-//Data Sanitization against Nosql Query injection
-// app.use(mongoSanitize());
-
-// Data Sanitization against xss attacks
-// app.use(xss());
+app.use("/api", limiter);
 
 // preventing params pollution
 app.use(
@@ -61,7 +56,15 @@ app.use(
   })
 );
 app.use(cookieParser());
-app.use(express.json());
+// body parser
+app.use(express.json({ limit: "10kb" }));
+//Data Sanitization against Nosql Query injection
+// app.use(mongoSanitize());
+
+// Data Sanitization against xss attacks
+app.use(xss());
+
+//handiling static files
 app.use(express.static(`${__dirname}/public`));
 
 //using the template enigine (PUG)
